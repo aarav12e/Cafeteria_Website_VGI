@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { FaShoppingCart, FaUtensils } from 'react-icons/fa';
+import { isAdminLoggedIn } from '../hooks/useAdminAuth';
 
 const Navbar = () => {
     const { cartItems } = useCart();
-    const { user } = useUser();
     const { pathname } = useLocation();
-    const isAdmin = user?.publicMetadata?.role === 'admin' || user?.emailAddresses[0]?.emailAddress?.includes('admin');
+    const isAdmin = isAdminLoggedIn();
 
     return (
         <nav className="hidden md:block sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-orange-100 shadow-sm">
@@ -38,9 +38,13 @@ const Navbar = () => {
                         My Orders
                     </Link>
 
-                    {isAdmin && (
+                    {isAdmin ? (
                         <Link to="/admin/dashboard" className="font-semibold text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200 transition">
                             Admin Panel
+                        </Link>
+                    ) : (
+                        <Link to="/admin-login" className="font-semibold text-sm bg-gray-100 text-gray-600 px-3 py-1 rounded-full hover:bg-orange-100 hover:text-orange-600 transition">
+                            Admin Login
                         </Link>
                     )}
 

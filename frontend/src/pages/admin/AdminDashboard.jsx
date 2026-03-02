@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import useAxios from '../../hooks/useAxios';
-import { FaMoneyBillWave, FaShoppingBag, FaCheckCircle, FaClock, FaUtensils, FaListAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { FaMoneyBillWave, FaShoppingBag, FaCheckCircle, FaClock, FaUtensils, FaListAlt, FaSignOutAlt } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { logoutAdmin } from '../../hooks/useAdminAuth';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({ totalOrders: 0, totalRevenue: 0, pendingOrders: 0, completedOrders: 0 });
     const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const axios = useAxios();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logoutAdmin();
+        navigate('/admin-login');
+    };
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -54,9 +61,17 @@ const AdminDashboard = () => {
     return (
         <div>
             {/* Header */}
-            <div className="mb-8">
-                <h2 className="text-3xl font-extrabold text-gray-800">Admin Dashboard</h2>
-                <p className="text-gray-500 mt-1">Vishveshwarya Group of Institution — Cafeteria Management</p>
+            <div className="flex justify-between items-start mb-8">
+                <div>
+                    <h2 className="text-3xl font-extrabold text-gray-800">Admin Dashboard</h2>
+                    <p className="text-gray-500 mt-1 text-sm">Vishveshwarya Group of Institution — Cafeteria Management</p>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-100 transition border border-red-100"
+                >
+                    <FaSignOutAlt /> Logout
+                </button>
             </div>
 
             {/* Stat Cards */}

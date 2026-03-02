@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import UserSync from './components/UserSync';
@@ -7,49 +7,40 @@ import AuthPage from './pages/auth/AuthPage';
 import Menu from './pages/user/Menu';
 import Cart from './pages/user/Cart';
 import MyOrders from './pages/user/MyOrders';
+import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminMenu from './pages/admin/AdminMenu';
 import AdminOrders from './pages/admin/AdminOrders';
+import { isAdminLoggedIn } from './hooks/useAdminAuth';
 
+// Guard for admin pages — checks sessionStorage token
 const AdminRoute = ({ children }) => {
-  const { user, isLoaded } = useUser();
-
-  if (!isLoaded) return <div className="p-10 text-center">Loading...</div>;
-
-  // Check if user has admin role (stored in publicMetadata or check email)
-  // For now, let's assume a hardcoded check or metadata
-  // In production, sync Clerk user to your DB and check DB role
-  const isAdmin = user?.publicMetadata?.role === 'admin' || user?.emailAddresses[0]?.emailAddress?.includes('admin');
-
-  return isAdmin ? children : <Navigate to="/menu" />;
+  return isAdminLoggedIn() ? children : <Navigate to="/admin-login" replace />;
 };
 
 function App() {
   return (
-    <div className="min-h-screen bg-yummies-bg pb-20 md:pb-0">
+    <div className="min-h-screen bg-vgi-bg pb-20 md:pb-0">
       <UserSync />
-      <Navbar /> {/* Top Nav for Desktop */}
+      <Navbar />
 
-      <div className="container mx-auto p-4 md:p-8">
+      <div className="container mx-auto px-4 py-6 md:px-8">
         <Routes>
-          {/* Public Routes */}
+          {/* Public */}
           <Route path="/" element={<Navigate to="/menu" />} />
+          <Route path="/menu" element={<Menu />} />
+
+          {/* Auth */}
           <Route path="/auth" element={
             <>
-              <SignedOut>
-                <AuthPage />
-              </SignedOut>
-              <SignedIn>
-                <Navigate to="/menu" />
-              </SignedIn>
+              <SignedOut><AuthPage /></SignedOut>
+              <SignedIn><Navigate to="/menu" /></SignedIn>
             </>
           } />
           <Route path="/login" element={<Navigate to="/auth" />} />
           <Route path="/register" element={<Navigate to="/auth" />} />
 
-          <Route path="/menu" element={<Menu />} />
-
-          {/* User Routes (Protected) */}
+          {/* User Protected */}
           <Route path="/cart" element={
             <>
               <SignedIn><Cart /></SignedIn>
@@ -63,20 +54,17 @@ function App() {
             </>
           } />
 
-          {/* Admin Routes */}
-          <Route path="/admin/dashboard" element={
-            <SignedIn><AdminRoute><AdminDashboard /></AdminRoute></SignedIn>
-          } />
-          <Route path="/admin/menu" element={
-            <SignedIn><AdminRoute><AdminMenu /></AdminRoute></SignedIn>
-          } />
-          <Route path="/admin/orders" element={
-            <SignedIn><AdminRoute><AdminOrders /></AdminRoute></SignedIn>
-          } />
+          {/* Admin Auth */}
+          <Route path="/admin-login" element={<AdminLogin />} />
+
+          {/* Admin Protected Routes */}
+          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/menu" element={<AdminRoute><AdminMenu /></AdminRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
         </Routes>
       </div>
 
-      <BottomNav /> {/* Bottom Nav for Mobile */}
+      <BottomNav />
     </div>
   );
 }

@@ -6,11 +6,15 @@ const {
     updateMenuItem,
     deleteMenuItem
 } = require('../controllers/menuController');
-const { protect, admin } = require('../middlewares/authMiddleware');
+const { protect } = require('../middlewares/authMiddleware');
+const { adminProtect } = require('../middlewares/adminMiddleware');
 
+// Public - anyone can view menu
 router.get('/', getMenu);
-router.post('/', protect, admin, addMenuItem);
-router.put('/:id', protect, admin, updateMenuItem);
-router.delete('/:id', protect, admin, deleteMenuItem);
+
+// Admin only - requires admin JWT login
+router.post('/', adminProtect, addMenuItem);
+router.put('/:id', adminProtect, updateMenuItem);
+router.delete('/:id', adminProtect, deleteMenuItem);
 
 module.exports = router;

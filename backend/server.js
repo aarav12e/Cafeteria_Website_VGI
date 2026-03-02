@@ -28,6 +28,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/menu', require('./routes/menuRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/admin-auth', require('./routes/adminAuthRoutes'));
 
 const PORT = process.env.PORT || 5000;
 

@@ -6,11 +6,15 @@ const {
     getAllOrders,
     updateOrderStatus
 } = require('../controllers/orderController');
-const { protect, admin } = require('../middlewares/authMiddleware');
+const { protect } = require('../middlewares/authMiddleware');
+const { adminProtect } = require('../middlewares/adminMiddleware');
 
+// User routes - requires Clerk auth
 router.post('/', protect, createOrder);
 router.get('/myorders', protect, getMyOrders);
-router.get('/admin', protect, admin, getAllOrders);
-router.put('/:id/status', protect, admin, updateOrderStatus);
+
+// Admin routes - requires admin JWT login  
+router.get('/admin', adminProtect, getAllOrders);
+router.put('/:id/status', adminProtect, updateOrderStatus);
 
 module.exports = router;

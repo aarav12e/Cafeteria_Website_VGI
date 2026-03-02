@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FaHome, FaUtensils, FaShoppingCart, FaUser, FaTachometerAlt } from 'react-icons/fa';
+import { FaUtensils, FaShoppingCart, FaUser, FaTachometerAlt, FaLock } from 'react-icons/fa';
 import { useCart } from '../context/CartContext';
 import { useUser } from '@clerk/clerk-react';
+import { isAdminLoggedIn } from '../hooks/useAdminAuth';
 
 const BottomNav = () => {
     const { pathname } = useLocation();
     const { cartItems } = useCart();
-    const { isSignedIn, user } = useUser();
-    const isAdmin = user?.publicMetadata?.role === 'admin' || user?.emailAddresses[0]?.emailAddress?.includes('admin');
+    const { isSignedIn } = useUser();
+    const isAdmin = isAdminLoggedIn();
 
     if (pathname === '/auth') return null;
 
@@ -17,9 +18,12 @@ const BottomNav = () => {
         { path: isSignedIn ? '/myorders' : '/auth', icon: <FaUser size={19} />, label: isSignedIn ? 'Orders' : 'Login' },
     ];
 
-    if (isAdmin) {
-        navItems.push({ path: '/admin/dashboard', icon: <FaTachometerAlt size={19} />, label: 'Admin' });
-    }
+    // Always show Admin link at the bottom nav - goes to login or dashboard
+    navItems.push({
+        path: isAdmin ? '/admin/dashboard' : '/admin-login',
+        icon: <FaTachometerAlt size={19} />,
+        label: isAdmin ? 'Admin' : 'Admin'
+    });
 
     return (
         <div className="fixed bottom-0 left-0 w-full bg-white/95 border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] rounded-t-3xl px-4 py-2 flex justify-around items-center md:hidden z-50">
