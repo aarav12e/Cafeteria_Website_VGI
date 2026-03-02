@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vgi-bg text-gray-800 antialiased;
+    font-family: 'Poppins', 'Inter', sans-serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f97316;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* Gradient animations */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-gradient {
+  background: linear-gradient(135deg, #7c3aed 0%, #ea580c 50%, #dc2626 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.vgi-card {
+  @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
