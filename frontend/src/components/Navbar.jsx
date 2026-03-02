@@ -10,50 +10,52 @@ const Navbar = () => {
     const isAdmin = isAdminLoggedIn();
 
     return (
-        <nav className="hidden md:block sticky top-0 z-50 glass border-b border-white/10 shadow-lg">
+        <nav className="hidden md:block sticky top-0 z-50"
+            style={{ background: 'rgba(10,10,24,0.75)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
             <div className="container mx-auto px-6 py-3.5 flex justify-between items-center">
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg glow-orange group-hover:scale-105 transition-transform">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform"
+                        style={{ background: 'linear-gradient(135deg, #f97316, #dc2626)' }}>
                         <FaUtensils className="text-white text-sm" />
                     </div>
                     <div className="leading-tight">
-                        <span className="block text-[10px] font-bold text-orange-400 tracking-widest uppercase">VGI</span>
+                        <span className="block text-[10px] font-black tracking-widest uppercase" style={{ color: '#f97316' }}>VGI</span>
                         <span className="block text-sm font-extrabold text-white leading-none">Cafeteria</span>
                     </div>
                 </Link>
 
-                {/* Center */}
+                {/* Center Title */}
                 <div className="text-center hidden lg:block">
-                    <h1 className="text-sm font-bold text-white/90 tracking-wide">Vishveshwarya Group of Institution</h1>
-                    <p className="text-[11px] text-orange-400 font-medium tracking-wide">Campus Cafeteria</p>
+                    <p className="text-sm font-bold text-white/80 tracking-wide">Vishveshwarya Group of Institution</p>
+                    <p className="text-[11px] font-semibold tracking-wider" style={{ color: '#f97316' }}>Campus Cafeteria</p>
                 </div>
 
                 {/* Nav Links */}
                 <div className="flex items-center space-x-5">
-                    {[
-                        { to: '/menu', label: 'Menu' },
-                        { to: '/myorders', label: 'My Orders' },
-                    ].map(link => (
-                        <Link key={link.to} to={link.to}
-                            className={`font-semibold text-sm transition-all ${pathname === link.to ? 'text-orange-400' : 'text-white/70 hover:text-white'}`}>
-                            {link.label}
-                        </Link>
-                    ))}
+                    <Link to="/menu"
+                        className="font-semibold text-sm transition-all"
+                        style={{ color: pathname === '/menu' ? '#f97316' : 'rgba(255,255,255,0.65)' }}>
+                        Menu
+                    </Link>
+                    <Link to="/myorders"
+                        className="font-semibold text-sm transition-all"
+                        style={{ color: pathname === '/myorders' ? '#f97316' : 'rgba(255,255,255,0.65)' }}>
+                        My Orders
+                    </Link>
 
-                    {isAdmin ? (
+                    {/* Admin panel only shows when logged in as admin */}
+                    {isAdmin && (
                         <Link to="/admin/dashboard"
-                            className="text-xs font-bold px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md hover:shadow-purple-500/40 hover:scale-105 transition-all">
+                            className="text-xs font-bold px-4 py-1.5 rounded-full text-white transition-all"
+                            style={{ background: 'linear-gradient(to right, #7c3aed, #4f46e5)' }}>
                             Admin Panel
-                        </Link>
-                    ) : (
-                        <Link to="/admin-login"
-                            className="text-xs font-bold px-4 py-1.5 rounded-full border border-white/20 text-white/60 hover:text-white hover:border-orange-400 transition-all">
-                            Admin Login
                         </Link>
                     )}
 
-                    <Link to="/cart" className="relative p-2 rounded-xl bg-white/10 hover:bg-orange-500/20 border border-white/10 transition-all">
+                    {/* Cart */}
+                    <Link to="/cart" className="relative p-2 rounded-xl transition-all"
+                        style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}>
                         <FaShoppingCart className="text-white" size={17} />
                         {cartItems.length > 0 && (
                             <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
@@ -64,7 +66,9 @@ const Navbar = () => {
 
                     <SignedIn><UserButton afterSignOutUrl="/" /></SignedIn>
                     <SignedOut>
-                        <Link to="/auth" className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg hover:shadow-orange-500/40 hover:scale-105 transition-all">
+                        <Link to="/auth"
+                            className="text-white px-5 py-2 rounded-full font-bold text-sm shadow-lg hover:scale-105 transition-all"
+                            style={{ background: 'linear-gradient(to right, #f97316, #dc2626)' }}>
                             Sign In
                         </Link>
                     </SignedOut>

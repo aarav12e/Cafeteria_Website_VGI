@@ -10,25 +10,27 @@ const BottomNav = () => {
     const { isSignedIn } = useUser();
     const isAdmin = isAdminLoggedIn();
 
+    // Hide on auth pages
     if (pathname === '/auth' || pathname === '/admin-login') return null;
 
     const navItems = [
         { path: '/menu', icon: <FaUtensils size={18} />, label: 'Menu' },
         { path: '/cart', icon: <FaShoppingCart size={18} />, label: 'Cart', badge: cartItems.length },
-        { path: isSignedIn ? '/myorders' : '/auth', icon: <FaUser size={18} />, label: isSignedIn ? 'Orders' : 'Login' },
-        { path: isAdmin ? '/admin/dashboard' : '/admin-login', icon: <FaTachometerAlt size={18} />, label: 'Admin' },
+        { path: isSignedIn ? '/myorders' : '/auth', icon: <FaUser size={18} />, label: isSignedIn ? 'Orders' : 'Sign In' },
+        // Admin tab ONLY shows if logged in as admin
+        ...(isAdmin ? [{ path: '/admin/dashboard', icon: <FaTachometerAlt size={18} />, label: 'Admin' }] : []),
     ];
 
     return (
         <div className="fixed bottom-0 left-0 w-full z-50 md:hidden">
-            <div className="glass border-t border-white/10 px-2 py-2 flex justify-around items-center">
+            <div className="px-2 py-2 flex justify-around items-center"
+                style={{ background: 'rgba(10,10,24,0.85)', backdropFilter: 'blur(20px)', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
                 {navItems.map((item) => {
                     const isActive = pathname === item.path || (item.path !== '/' && pathname.startsWith(item.path));
                     return (
-                        <Link key={item.label} to={item.path}
-                            className="flex flex-col items-center py-1.5 px-3">
-                            <div className={`relative p-2 rounded-xl transition-all duration-200 ${isActive ? 'bg-orange-500/20' : 'hover:bg-white/10'}`}>
-                                <span className={isActive ? 'text-orange-400' : 'text-white/50'}>
+                        <Link key={item.label} to={item.path} className="flex flex-col items-center py-1.5 px-4">
+                            <div className={`relative p-2 rounded-xl transition-all duration-200 ${isActive ? 'bg-orange-500/20' : ''}`}>
+                                <span style={{ color: isActive ? '#f97316' : 'rgba(255,255,255,0.4)' }}>
                                     {item.icon}
                                 </span>
                                 {item.badge > 0 && (
@@ -37,7 +39,8 @@ const BottomNav = () => {
                                     </span>
                                 )}
                             </div>
-                            <span className={`text-[10px] mt-0.5 font-semibold ${isActive ? 'text-orange-400' : 'text-white/40'}`}>
+                            <span className="text-[10px] mt-0.5 font-semibold"
+                                style={{ color: isActive ? '#f97316' : 'rgba(255,255,255,0.3)' }}>
                                 {item.label}
                             </span>
                         </Link>
