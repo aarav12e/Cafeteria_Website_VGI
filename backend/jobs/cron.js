@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 
 const cleanupPendingOrders = () => {
     // Run every hour: '0 * * * *'
-    cron.schedule('0 * * * *', async () => {
+    cron.schedule('*/14 * * * *', async () => {
         console.log('Running Cron Job: Cleanup Pending Orders');
         try {
             const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);

@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import useAxios from '../../hooks/useAxios';
 import { useUser } from '@clerk/clerk-react';
-import { FaTrash, FaMinus, FaPlus, FaShoppingBag, FaCreditCard } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { FaTrash, FaMinus, FaPlus, FaShoppingBag, FaCreditCard, FaArrowRight } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Cart = () => {
     const { cartItems, updateQty, removeFromCart, totalAmount, clearCart } = useCart();
@@ -11,157 +11,103 @@ const Cart = () => {
     const axios = useAxios();
     const navigate = useNavigate();
 
-    const loadRazorpay = () => {
-        return new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-    };
+    const loadRazorpay = () => new Promise(resolve => {
+        const s = document.createElement('script');
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        s.onload = () => resolve(true);
+        s.onerror = () => resolve(false);
+        document.body.appendChild(s);
+    });
 
     const handleCheckout = async () => {
         if (!user) { navigate('/auth'); return; }
-        const res = await loadRazorpay();
-        if (!res) { alert('Razorpay SDK failed to load. Are you online?'); return; }
-
+        const ok = await loadRazorpay();
+        if (!ok) { alert('Razorpay failed to load. Are you online?'); return; }
         try {
-            const orderData = {
-                items: cartItems.map(item => ({
-                    menuId: item._id, qty: item.qty, name: item.name, price: item.price
-                })),
-                totalAmount
-            };
+            const orderData = { items: cartItems.map(i => ({ menuId: i._id, qty: i.qty, name: i.name, price: i.price })), totalAmount };
             const { data: dbOrder } = await axios.post('/orders', orderData);
-            const { data: razorpayOrder } = await axios.post('/payments/create-order', {
-                amount: totalAmount, orderId: dbOrder._id
-            });
-
-            const options = {
-                key: import.meta.env.VITE_RAZORPAY_KEY_ID || "YOUR_RAZORPAY_KEY_ID",
-                amount: razorpayOrder.amount,
-                currency: razorpayOrder.currency,
-                name: "VGI Cafeteria",
-                description: "Vishveshwarya Group of Institution — Food Order",
-                image: "/vite.svg",
-                order_id: razorpayOrder.id,
-                handler: async function (response) {
+            const { data: rzpOrder } = await axios.post('/payments/create-order', { amount: totalAmount, orderId: dbOrder._id });
+            new window.Razorpay({
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'YOUR_RAZORPAY_KEY_ID',
+                amount: rzpOrder.amount, currency: rzpOrder.currency,
+                name: 'VGI Cafeteria', description: 'Food Order', order_id: rzpOrder.id,
+                handler: async (res) => {
                     try {
-                        await axios.post('/payments/verify', {
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                            orderId: dbOrder._id
-                        });
-                        clearCart();
-                        navigate('/myorders');
-                    } catch (error) {
-                        alert(error.response?.data?.message || 'Payment verification failed');
-                    }
+                        await axios.post('/payments/verify', { razorpay_order_id: res.razorpay_order_id, razorpay_payment_id: res.razorpay_payment_id, razorpay_signature: res.razorpay_signature, orderId: dbOrder._id });
+                        clearCart(); navigate('/myorders');
+                    } catch (e) { alert(e.response?.data?.message || 'Payment verification failed'); }
                 },
-                prefill: {
-                    name: user.fullName || user.firstName,
-                    email: user.primaryEmailAddress?.emailAddress,
-                },
-                theme: { color: "#ea580c" },
-            };
-
-            const paymentObject = new window.Razorpay(options);
-            paymentObject.open();
-        } catch (error) {
-            console.error(error);
-            alert('Something went wrong processing the order');
-        }
+                prefill: { name: user.fullName, email: user.primaryEmailAddress?.emailAddress },
+                theme: { color: '#ea580c' },
+            }).open();
+        } catch { alert('Order creation failed. Please try again.'); }
     };
 
-    if (cartItems.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6">
-                    <FaShoppingBag className="text-orange-300" size={36} />
-                </div>
-                <h2 className="text-2xl font-bold text-gray-700 mb-2">Your cart is empty</h2>
-                <p className="text-gray-400 mb-6 text-sm">Add delicious dishes from our cafeteria menu</p>
-                <button
-                    onClick={() => navigate('/menu')}
-                    className="bg-orange-500 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-orange-600 transition hover:scale-105"
-                >
-                    Browse Menu
-                </button>
+    if (cartItems.length === 0) return (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-24 h-24 glass rounded-full flex items-center justify-center mb-6 border border-white/10">
+                <FaShoppingBag className="text-white/30" size={36} />
             </div>
-        );
-    }
+            <h2 className="text-2xl font-black text-white mb-2">Your cart is empty</h2>
+            <p className="text-white/40 mb-6 text-sm">Add some amazing dishes from our menu</p>
+            <button onClick={() => navigate('/menu')}
+                className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:shadow-orange-500/40 hover:scale-105 transition-all">
+                Browse Menu <FaArrowRight size={13} />
+            </button>
+        </div>
+    );
 
     return (
         <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-extrabold text-gray-800 mb-6 flex items-center gap-2">
-                <FaShoppingBag className="text-orange-500" />
+            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
+                <FaShoppingBag className="text-orange-400" />
                 Your Cart
-                <span className="text-sm font-normal text-gray-400 ml-1">({cartItems.length} items)</span>
+                <span className="text-sm font-normal text-white/30 ml-1">({cartItems.length} items)</span>
             </h2>
 
-            <div className="bg-white rounded-3xl shadow-md p-5 mb-4 space-y-4">
-                {cartItems.map(item => (
-                    <motion.div
-                        key={item._id}
-                        layout
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-4 pb-4 border-b border-gray-50 last:border-0 last:pb-0"
-                    >
-                        <img
-                            src={item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80&q=80'}
-                            alt={item.name}
-                            className="w-16 h-16 object-cover rounded-2xl flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
-                            <p className="text-orange-500 font-bold text-sm">₹{item.price}</p>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center bg-gray-100 rounded-xl overflow-hidden">
-                                <button onClick={() => updateQty(item._id, item.qty - 1)} className="px-2.5 py-2 hover:bg-gray-200 transition text-gray-600">
-                                    <FaMinus size={10} />
-                                </button>
-                                <span className="px-3 font-bold text-sm text-gray-800">{item.qty}</span>
-                                <button onClick={() => updateQty(item._id, item.qty + 1)} className="px-2.5 py-2 hover:bg-gray-200 transition text-gray-600">
-                                    <FaPlus size={10} />
-                                </button>
+            <div className="glass rounded-3xl p-5 mb-4 space-y-4 border border-white/10">
+                <AnimatePresence>
+                    {cartItems.map(item => (
+                        <motion.div key={item._id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            className="flex items-center gap-4 pb-4 border-b border-white/5 last:border-0 last:pb-0">
+                            <img src={item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=80'}
+                                alt={item.name} className="w-16 h-16 object-cover rounded-2xl flex-shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-white text-sm truncate">{item.name}</h3>
+                                <p className="text-orange-400 font-bold text-sm">₹{item.price}</p>
                             </div>
-                            <button onClick={() => removeFromCart(item._id)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition">
-                                <FaTrash size={13} />
-                            </button>
-                        </div>
-                    </motion.div>
-                ))}
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center glass rounded-xl border border-white/10 overflow-hidden">
+                                    <button onClick={() => updateQty(item._id, item.qty - 1)} className="px-2.5 py-2 text-white/60 hover:text-white hover:bg-white/10 transition"><FaMinus size={10} /></button>
+                                    <span className="px-3 font-bold text-sm text-white">{item.qty}</span>
+                                    <button onClick={() => updateQty(item._id, item.qty + 1)} className="px-2.5 py-2 text-white/60 hover:text-white hover:bg-white/10 transition"><FaPlus size={10} /></button>
+                                </div>
+                                <button onClick={() => removeFromCart(item._id)} className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition"><FaTrash size={13} /></button>
+                            </div>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
             </div>
 
-            {/* Order Summary */}
-            <div className="bg-white rounded-3xl shadow-md p-5">
-                <h3 className="font-bold text-gray-700 mb-3">Order Summary</h3>
+            <div className="glass rounded-3xl p-5 border border-white/10">
+                <h3 className="font-bold text-white mb-3">Order Summary</h3>
                 <div className="space-y-2 mb-4">
                     {cartItems.map(item => (
-                        <div key={item._id} className="flex justify-between text-sm text-gray-600">
+                        <div key={item._id} className="flex justify-between text-sm text-white/50">
                             <span>{item.name} × {item.qty}</span>
-                            <span>₹{item.price * item.qty}</span>
+                            <span className="text-white/70">₹{item.price * item.qty}</span>
                         </div>
                     ))}
                 </div>
-                <div className="border-t pt-3 flex justify-between font-extrabold text-lg text-gray-800">
-                    <span>Total</span>
-                    <span className="text-orange-500">₹{totalAmount}</span>
+                <div className="border-t border-white/10 pt-3 flex justify-between font-black text-lg">
+                    <span className="text-white">Total</span>
+                    <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">₹{totalAmount}</span>
                 </div>
-                <button
-                    onClick={handleCheckout}
-                    className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-2xl font-bold text-base shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                >
-                    <FaCreditCard />
-                    Pay ₹{totalAmount} via UPI / Card
+                <button onClick={handleCheckout}
+                    className="mt-4 w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-2xl font-black text-base shadow-xl hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <FaCreditCard /> Pay ₹{totalAmount} — UPI / Card
                 </button>
-                <p className="text-center text-xs text-gray-400 mt-3">Powered by Razorpay · Secure Payment</p>
+                <p className="text-center text-xs text-white/20 mt-3">Secured by Razorpay</p>
             </div>
         </div>
     );
