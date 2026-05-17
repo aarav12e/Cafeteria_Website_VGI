@@ -12,22 +12,21 @@ const getMenu = async (req, res) => {
     }
 };
 
-// @desc    Add a menu item
-// @route   POST /api/menu
-// @access  Private/Admin
 const addMenuItem = async (req, res) => {
-    const { name, price, category, image, available } = req.body;
+    const { name, price, category, image, available, description, variants } = req.body;
 
-    if (!name || !price || !category || !image) {
-        return res.status(400).json({ message: 'Please add all fields' });
+    if (!name || !category) {
+        return res.status(400).json({ message: 'Please add all required fields (Name and Category)' });
     }
 
     try {
         const menuItem = await Menu.create({
             name,
-            price,
+            price: price !== undefined && price !== '' ? Number(price) : 0,
             category,
-            image,
+            image: image || '',
+            description: description || '',
+            variants: variants || [],
             available: available !== undefined ? available : true
         });
 
