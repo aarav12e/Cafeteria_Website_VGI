@@ -7,8 +7,13 @@ const menuSchema = mongoose.Schema({
     },
     price: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     },
+    variants: [{
+        name: String,
+        price: Number
+    }],
     category: {
         type: String,
         required: true
@@ -19,7 +24,12 @@ const menuSchema = mongoose.Schema({
     },
     image: {
         type: String,
-        required: true
+        required: false,
+        default: ''
+    },
+    description: {
+        type: String,
+        required: false
     }
 }, {
     timestamps: true

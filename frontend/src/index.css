@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,103 +6,25 @@
 
 @layer base {
   body {
-    @apply text-gray-800 antialiased;
-    font-family: 'Poppins', sans-serif;
-    background: #0f0f1a;
-  }
-}
-
-/* ── Motion Background ───────────────────────────────── */
-.motion-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 40%, #0d1f3c 70%, #0f0f1a 100%);
-  overflow: hidden;
-}
-
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.35;
-  animation: floatOrb linear infinite;
-}
-
-.orb-1 {
-  width: 550px;
-  height: 550px;
-  background: radial-gradient(circle, #f97316, #ea580c);
-  top: -150px;
-  left: -150px;
-  animation-duration: 18s;
-}
-
-.orb-2 {
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, #7c3aed, #4f46e5);
-  bottom: -100px;
-  right: -100px;
-  animation-duration: 22s;
-  animation-delay: -7s;
-}
-
-.orb-3 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, #ec4899, #be185d);
-  top: 40%;
-  left: 55%;
-  animation-duration: 26s;
-  animation-delay: -12s;
-}
-
-.orb-4 {
-  width: 250px;
-  height: 250px;
-  background: radial-gradient(circle, #06b6d4, #0891b2);
-  bottom: 20%;
-  left: 10%;
-  animation-duration: 20s;
-  animation-delay: -4s;
-}
-
-@keyframes floatOrb {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  25% {
-    transform: translate(60px, -80px) scale(1.08);
-  }
-
-  50% {
-    transform: translate(-40px, 60px) scale(0.94);
-  }
-
-  75% {
-    transform: translate(80px, 40px) scale(1.05);
-  }
-
-  100% {
-    transform: translate(0, 0) scale(1);
+    @apply text-gray-200 antialiased;
+    font-family: 'Inter', sans-serif;
+    background: #000;
   }
 }
 
 /* ── Glassmorphism ───────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-white {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(25, 25, 25, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* ── Custom Scrollbar ────────────────────────────────── */
@@ -115,21 +37,17 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #f97316;
+  background: #333;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: #555;
 }
 
 /* ── Glow effects ────────────────────────────────────── */
-.glow-orange {
-  box-shadow: 0 0 30px rgba(249, 115, 22, 0.4);
-}
-
-.glow-purple {
-  box-shadow: 0 0 30px rgba(124, 58, 237, 0.4);
+.glow-neutral {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 /* ── Content layout ─────────────────────────────────── */

@@ -13,7 +13,7 @@ const AdminDashboard = () => {
 
     const handleLogout = () => {
         logoutAdmin();
-        navigate('/admin-login');
+        navigate('/vgi-secret-admin');
     };
 
     useEffect(() => {
@@ -38,24 +38,24 @@ const AdminDashboard = () => {
     if (loading) return (
         <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {[...Array(4)].map((_, i) => <div key={i} className="bg-white rounded-3xl h-28 animate-pulse" />)}
+                {[...Array(4)].map((_, i) => <div key={i} className="bg-white/5 rounded-3xl h-28 animate-pulse" />)}
             </div>
         </div>
     );
 
     const cards = [
-        { title: 'Total Revenue', value: `₹${stats.totalRevenue.toLocaleString('en-IN')}`, icon: <FaMoneyBillWave size={22} />, from: 'from-green-400', to: 'to-emerald-600' },
-        { title: 'Total Orders', value: stats.totalOrders, icon: <FaShoppingBag size={22} />, from: 'from-blue-400', to: 'to-blue-600' },
-        { title: 'Active Orders', value: stats.pendingOrders, icon: <FaClock size={22} />, from: 'from-orange-400', to: 'to-orange-600' },
-        { title: 'Completed', value: stats.completedOrders, icon: <FaCheckCircle size={22} />, from: 'from-purple-400', to: 'to-purple-600' },
+        { title: 'Total Revenue', value: `₹${stats.totalRevenue.toLocaleString('en-IN')}`, icon: <FaMoneyBillWave size={22} />, from: 'from-gray-700', to: 'to-gray-900' },
+        { title: 'Total Orders', value: stats.totalOrders, icon: <FaShoppingBag size={22} />, from: 'from-gray-700', to: 'to-gray-900' },
+        { title: 'Active Orders', value: stats.pendingOrders, icon: <FaClock size={22} />, from: 'from-gray-700', to: 'to-gray-900' },
+        { title: 'Completed', value: stats.completedOrders, icon: <FaCheckCircle size={22} />, from: 'from-gray-700', to: 'to-gray-900' },
     ];
 
     const STATUS_COLORS = {
-        completed: 'bg-green-100 text-green-700',
-        cancelled: 'bg-red-100 text-red-700',
-        placed: 'bg-blue-100 text-blue-700',
-        preparing: 'bg-yellow-100 text-yellow-700',
-        ready: 'bg-purple-100 text-purple-700',
+        completed: 'bg-white/10 text-white border border-white/20',
+        cancelled: 'bg-red-900/50 text-red-200 border border-red-900/50',
+        placed: 'bg-white/10 text-white border border-white/20',
+        preparing: 'bg-white/10 text-white border border-white/20',
+        ready: 'bg-white/10 text-white border border-white/20',
     };
 
     return (
@@ -63,12 +63,12 @@ const AdminDashboard = () => {
             {/* Header */}
             <div className="flex justify-between items-start mb-8">
                 <div>
-                    <h2 className="text-3xl font-extrabold text-gray-800">Admin Dashboard</h2>
-                    <p className="text-gray-500 mt-1 text-sm">Vishveshwarya Group of Institution — Cafeteria Management</p>
+                    <h2 className="text-3xl font-extrabold text-white">Admin Dashboard</h2>
+                    <p className="text-gray-400 mt-1 text-sm">Vishveshwarya Group of Institution — Cafeteria Management</p>
                 </div>
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-100 transition border border-red-100"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 text-white rounded-2xl font-bold text-sm hover:bg-white/10 transition border border-white/10"
                 >
                     <FaSignOutAlt /> Logout
                 </button>
@@ -77,13 +77,13 @@ const AdminDashboard = () => {
             {/* Stat Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 {cards.map((card, index) => (
-                    <div key={index} className="bg-white rounded-3xl shadow-md p-5 flex flex-col gap-3">
-                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.from} ${card.to} flex items-center justify-center text-white shadow-md`}>
+                    <div key={index} className="bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-md p-5 flex flex-col gap-3">
+                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${card.from} ${card.to} flex items-center justify-center text-white shadow-md border border-white/10`}>
                             {card.icon}
                         </div>
                         <div>
                             <p className="text-gray-400 text-xs font-medium">{card.title}</p>
-                            <h3 className="text-2xl font-extrabold text-gray-800">{card.value}</h3>
+                            <h3 className="text-2xl font-extrabold text-white">{card.value}</h3>
                         </div>
                     </div>
                 ))}
@@ -91,42 +91,42 @@ const AdminDashboard = () => {
 
             {/* Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                <Link to="/admin/menu" className="bg-gradient-to-br from-orange-400 to-red-500 rounded-3xl p-6 text-white flex items-center gap-4 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
-                    <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                <Link to="/admin/menu" className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 text-white flex items-center gap-4 shadow-lg hover:bg-white/5 transition-all">
+                    <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10">
                         <FaUtensils size={24} />
                     </div>
                     <div>
                         <h3 className="font-extrabold text-lg">Manage Menu</h3>
-                        <p className="text-white/80 text-sm">Add, edit or remove dishes</p>
+                        <p className="text-gray-400 text-sm">Add, edit or remove dishes</p>
                     </div>
                 </Link>
-                <Link to="/admin/orders" className="bg-gradient-to-br from-blue-400 to-indigo-600 rounded-3xl p-6 text-white flex items-center gap-4 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
-                    <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                <Link to="/admin/orders" className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 text-white flex items-center gap-4 shadow-lg hover:bg-white/5 transition-all">
+                    <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10">
                         <FaListAlt size={24} />
                     </div>
                     <div>
                         <h3 className="font-extrabold text-lg">View Orders</h3>
-                        <p className="text-white/80 text-sm">Track & update order status</p>
+                        <p className="text-gray-400 text-sm">Track & update order status</p>
                     </div>
                 </Link>
             </div>
 
             {/* Recent Orders */}
-            <div className="bg-white rounded-3xl shadow-md p-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Recent Orders</h3>
+            <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl shadow-md p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Recent Orders</h3>
                 {recentOrders.length === 0 ? (
-                    <p className="text-gray-400 text-sm text-center py-4">No orders yet</p>
+                    <p className="text-gray-500 text-sm text-center py-4">No orders yet</p>
                 ) : (
                     <div className="space-y-3">
                         {recentOrders.map(order => (
-                            <div key={order._id} className="flex justify-between items-center p-3 bg-gray-50 rounded-2xl">
+                            <div key={order._id} className="flex justify-between items-center p-3 bg-[#111] border border-white/5 rounded-2xl">
                                 <div>
-                                    <p className="font-bold text-sm text-gray-800">#{order._id.slice(-6).toUpperCase()}</p>
+                                    <p className="font-bold text-sm text-white">#{order._id.slice(-6).toUpperCase()}</p>
                                     <p className="text-xs text-gray-400">{order.userId?.name || 'Guest'} · {order.items.length} item(s)</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold text-orange-500 text-sm">₹{order.totalAmount}</p>
-                                    <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${STATUS_COLORS[order.orderStatus] || 'bg-gray-100 text-gray-600'}`}>
+                                    <p className="font-bold text-white text-sm mb-1">₹{order.totalAmount}</p>
+                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider ${STATUS_COLORS[order.orderStatus] || 'bg-white/10 text-white'}`}>
                                         {order.orderStatus}
                                     </span>
                                 </div>
