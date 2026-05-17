@@ -61,14 +61,14 @@ const AdminDashboard = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
                     <h2 className="text-3xl font-extrabold text-white">Admin Dashboard</h2>
                     <p className="text-gray-400 mt-1 text-sm">Vishveshwarya Group of Institution — Cafeteria Management</p>
                 </div>
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/5 text-white rounded-2xl font-bold text-sm hover:bg-white/10 transition border border-white/10"
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-white/5 text-white rounded-2xl font-bold text-sm hover:bg-white/10 transition border border-white/10 w-full sm:w-auto"
                 >
                     <FaSignOutAlt /> Logout
                 </button>

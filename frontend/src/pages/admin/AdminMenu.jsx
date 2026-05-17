@@ -109,13 +109,13 @@ const AdminMenu = () => {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                     <h2 className="text-3xl font-black text-white">Menu Management</h2>
                     <p className="text-gray-400 text-sm mt-0.5">{menu.length} items</p>
                 </div>
                 <button onClick={() => { resetForm(); setShowForm(s => !s); }}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-black font-bold text-sm shadow-lg hover:bg-gray-200 transition-all">
+                    className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-white text-black font-bold text-sm shadow-lg hover:bg-gray-200 transition-all w-full sm:w-auto">
                     <FaPlus size={12} /> Add Item
                 </button>
             </div>
